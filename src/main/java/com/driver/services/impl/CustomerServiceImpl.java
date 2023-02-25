@@ -45,43 +45,43 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public TripBooking bookTrip(int customerId, String fromLocation, String toLocation, int distanceInKm) throws Exception{
+	public TripBooking bookTrip(int customerId, String fromLocation, String toLocation, int distanceInKm) throws Exception {
 		//Book the driver with lowest driverId who is free (cab available variable is Boolean.TRUE). If no driver is available, throw "No cab available!" exception
 		//Avoid using SQL query
-		int driverId = 0;
-		for (Driver driver: driverRepository2.findAll() ) {
+
+		Driver driver1 = null;
+		for (Driver driver : driverRepository2.findAll()) {
 			Cab cab = driver.getCab();
-			if(cab.getAvailable()) {
-				driverId = driver.getDriverId();
+			if (cab.getAvailable()) {
+				driver1 = driver;
 				break;
 			}
 
 		}
-		if(driverId ==0) throw new Exception("No cab available!");
+		if (driver1.getDriverId() == 0) throw new Exception("No cab available!");
 
 		Customer customer = customerRepository2.findById(customerId).get();
-		Driver driver = driverRepository2.findById(driverId).get();
-		Cab cab = driver.getCab();
+		Cab cab = driver1.getCab();
 
 		TripBooking tripBooking = new TripBooking();
 		tripBooking.setCustomer(customer);
 		tripBooking.setDistanceInKm(distanceInKm);
 		tripBooking.setToLocation(toLocation);
-		tripBooking.setDriver(driver);
+		tripBooking.setDriver(driver1);
 		tripBooking.setStatus(TripStatus.CONFIRMED);
 		cab.setAvailable(false);
-		driver.setCab(cab);
+		driver1.setCab(cab);
 
-		List<TripBooking> tripBookingList = driver.getTripBookingList();
+		List<TripBooking> tripBookingList = driver1.getTripBookingList();
 		tripBookingList.add(tripBooking);
-		driver.setTripBookingList(tripBookingList);
+		driver1.setTripBookingList(tripBookingList);
 
 		List<TripBooking> tripBookingList1 = customer.getTripBookingList();
 		tripBookingList1.add(tripBooking);
 		customer.setTripBookingList(tripBookingList1);
 
 		customerRepository2.save(customer);
-		driverRepository2.save(driver);
+		driverRepository2.save(driver1);
 		tripBookingRepository2.save(tripBooking);
 		return tripBooking;
 	}
