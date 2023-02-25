@@ -18,8 +18,8 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	CustomerRepository customerRepository2;
 
-	@Autowired
-	CabRepository cabRepository;
+//	@Autowired
+//	CabRepository cabRepository;
 
 	@Autowired
 	DriverRepository driverRepository2;
@@ -92,9 +92,11 @@ public class CustomerServiceImpl implements CustomerService {
 	public void cancelTrip(Integer tripId){
 		//Cancel the trip having given trip Id and update TripBooking attributes accordingly
 		TripBooking tripBooking = tripBookingRepository2.findById(tripId).get();
-		Cab cab = tripBooking.getDriver().getCab();
+		Driver driver = tripBooking.getDriver();
+		Cab cab = driver.getCab();
 		cab.setAvailable(false);
-		cabRepository.save(cab);
+		driver.setCab(cab);
+		driverRepository2.save(driver);
 		tripBooking.setStatus(TripStatus.CANCELED);
 		tripBookingRepository2.save(tripBooking);
 
@@ -104,9 +106,11 @@ public class CustomerServiceImpl implements CustomerService {
 	public void completeTrip(Integer tripId){
 		//Complete the trip having given trip Id and update TripBooking attributes accordingly
 		TripBooking tripBooking = tripBookingRepository2.findById(tripId).get();
-		Cab cab = tripBooking.getDriver().getCab();
+		Driver driver = tripBooking.getDriver();
+		Cab cab = driver.getCab();
 		cab.setAvailable(true);
-		cabRepository.save(cab);
+		driver.setCab(cab);
+		driverRepository2.save(driver);
 		tripBooking.setStatus(TripStatus.COMPLETED);
 		tripBookingRepository2.save(tripBooking);
 	}
