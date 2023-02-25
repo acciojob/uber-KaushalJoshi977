@@ -58,7 +58,8 @@ public class CustomerServiceImpl implements CustomerService {
 			}
 
 		}
-		if (driver1.getDriverId() == 0) throw new Exception("No cab available!");
+		if (driver1.getDriverId() == 0) return null;
+			//throw new Exception("No cab available!");
 
 		Customer customer = customerRepository2.findById(customerId).get();
 		Cab cab = driver1.getCab();
@@ -69,6 +70,7 @@ public class CustomerServiceImpl implements CustomerService {
 		tripBooking.setToLocation(toLocation);
 		tripBooking.setDriver(driver1);
 		tripBooking.setStatus(TripStatus.CONFIRMED);
+		tripBooking.setFromLocation(fromLocation);
 		cab.setAvailable(false);
 		driver1.setCab(cab);
 
